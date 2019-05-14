@@ -5,19 +5,62 @@
  */
 package view;
 
+import Conn.KoneksiKopi;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.sql.Connection;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author WINDOWS 10
  */
 public class Laporan extends javax.swing.JFrame {
+    Dimension layar = Toolkit.getDefaultToolkit().getScreenSize();
 
     /**
      * Creates new form Laporan
      */
     public Laporan() {
         initComponents();
+        Tampil();
+        
+        int x = layar.width / 2  - this.getSize().width / 2;
+        int y = layar.height / 2 - this.getSize().height / 2;
+        
+        this.setLocation(x, y);
     }
-
+    
+    private void Tampil(){
+    DefaultTableModel model = new DefaultTableModel();
+    model.addColumn("ID Transaksi");
+    model.addColumn("Nama Kopi");
+    model.addColumn("Harga");
+    model.addColumn("Nama Pembeli");
+    model.addColumn("Alamat");
+    model.addColumn("No Telpon");
+    model.addColumn("Jumlah");
+    model.addColumn("Total Bayar");
+    model.addColumn("Waktu");
+    
+    
+    
+    try{
+        String sql = "SELECT * FROM transaksi INNER JOIN data_coffee ON data_coffee.id = transaksi.id";
+        java.sql.Connection conn = (Connection) KoneksiKopi.koneksiDB();
+        java.sql.Statement stm = conn.createStatement();
+        java.sql.ResultSet res = stm.executeQuery(sql);
+        
+        while(res.next()){
+            model.addRow(new Object[]{res.getString(1),res.getString(11),res.getString(13),res.getString(4),res.getString(5),res.getString(6),res.getString(7),res.getString(8),res.getString(9)});
+        }
+        tbl_laporan.setModel(model);
+        
+    }catch(Exception e){
+        System.out.println(e.getMessage());
+    }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -32,8 +75,8 @@ public class Laporan extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbl_laporan = new javax.swing.JTable();
-        jTextField1 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        txt_id = new javax.swing.JTextField();
+        btn_hapus = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jButton2 = new javax.swing.JButton();
 
@@ -59,11 +102,27 @@ public class Laporan extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tbl_laporan.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbl_laporanMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tbl_laporan);
 
-        jButton1.setFont(new java.awt.Font("Rockwell", 1, 18)); // NOI18N
-        jButton1.setForeground(new java.awt.Color(100, 59, 22));
-        jButton1.setText("Hapus");
+        txt_id.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txt_idKeyPressed(evt);
+            }
+        });
+
+        btn_hapus.setFont(new java.awt.Font("Rockwell", 1, 18)); // NOI18N
+        btn_hapus.setForeground(new java.awt.Color(100, 59, 22));
+        btn_hapus.setText("Hapus");
+        btn_hapus.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_hapusActionPerformed(evt);
+            }
+        });
 
         jLabel1.setBackground(new java.awt.Color(100, 59, 22));
         jLabel1.setFont(new java.awt.Font("Rockwell", 1, 18)); // NOI18N
@@ -80,9 +139,9 @@ public class Laporan extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txt_id, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton1)
+                        .addComponent(btn_hapus)
                         .addGap(33, 33, 33))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 515, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -93,8 +152,8 @@ public class Laporan extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap(22, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jTextField1)
+                    .addComponent(btn_hapus, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txt_id)
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 332, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -162,6 +221,57 @@ public class Laporan extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
 
+    private void btn_hapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_hapusActionPerformed
+         try{
+            String sql = "DELETE FROM transaksi WHERE id_transaksi="+txt_id.getText();
+            java.sql.Connection conn = (Connection) KoneksiKopi.koneksiDB();
+            java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+            pst.execute();
+            JOptionPane.showMessageDialog(null, "Data Berhasil Di Hapus");
+        
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+        Tampil();
+    }//GEN-LAST:event_btn_hapusActionPerformed
+
+    private void txt_idKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_idKeyPressed
+       DefaultTableModel model = new DefaultTableModel();
+          model.addColumn("ID Transaksi");
+          model.addColumn("Nama Kopi");
+          model.addColumn("Harga");
+          model.addColumn("Nama Pembeli");
+          model.addColumn("Alamat");
+          model.addColumn("No Telpon");
+          model.addColumn("Jumlah");
+          model.addColumn("Total Bayar");
+          model.addColumn("Waktu");
+        
+        try{
+        String sql = "SELECT * FROM transaksi INNER JOIN data_coffee ON data_coffee.id = transaksi.id WHERE id_transaksi like '%"+txt_id.getText()+"%'  ";
+        java.sql.Connection conn = (Connection) KoneksiKopi.koneksiDB();
+        java.sql.Statement stm = conn.createStatement();
+        java.sql.ResultSet res = stm.executeQuery(sql);
+        
+        int no=0;
+        while(res.next()){
+            no++;
+            model.addRow(new Object[]{res.getString(1),res.getString(11),res.getString(13),res.getString(4),res.getString(5),res.getString(6),res.getString(7),res.getString(8),res.getString(9)});
+        }
+        tbl_laporan.setModel(model);
+        
+    }catch(Exception e){
+        System.out.println(e.getMessage());
+    }
+    
+    }//GEN-LAST:event_txt_idKeyPressed
+
+    private void tbl_laporanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_laporanMouseClicked
+        int baris = tbl_laporan.rowAtPoint(evt.getPoint());
+        String id_transaksi = tbl_laporan.getValueAt(baris, 0).toString();
+        txt_id.setText(id_transaksi);
+    }//GEN-LAST:event_tbl_laporanMouseClicked
+
     /**
      * @param args the command line arguments
      */
@@ -198,14 +308,14 @@ public class Laporan extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton btn_hapus;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextField1;
     private java.awt.Label label1;
     private javax.swing.JTable tbl_laporan;
+    private javax.swing.JTextField txt_id;
     // End of variables declaration//GEN-END:variables
 }

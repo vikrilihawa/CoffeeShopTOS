@@ -221,7 +221,13 @@ Dimension layar = Toolkit.getDefaultToolkit().getScreenSize();
                 txt_jumlahActionPerformed(evt);
             }
         });
+        txt_jumlah.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txt_jumlahKeyReleased(evt);
+            }
+        });
 
+        txt_total.setEditable(false);
         txt_total.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         txt_total.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -483,6 +489,17 @@ Dimension layar = Toolkit.getDefaultToolkit().getScreenSize();
             txt_jumlah.setText("");
             txt_total.setText("");
     }//GEN-LAST:event_btn_batalActionPerformed
+
+    private void txt_jumlahKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_jumlahKeyReleased
+       String harga   = txt_harga.getText();
+        String jumlah  = txt_jumlah.getText();     
+        
+        double hrg        = Double.parseDouble(harga);
+        double jml        = Double.parseDouble(jumlah);
+        
+        double tbyr = jml*hrg;
+        txt_total.setText(Double.toString(tbyr));
+    }//GEN-LAST:event_txt_jumlahKeyReleased
 
     /**
      * @param args the command line arguments
